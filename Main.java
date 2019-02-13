@@ -22,7 +22,7 @@ public class Main {
             System.out.print("7 - Consultation by Project;\n");
             System.out.print("8 - Generate Report;\n");
             System.out.print("9 - Turn Off the System (Stop Program).\n");
-            op = Integer.parseInt(input.nextLine());
+            op = lab.readInteger(op);
 
             if(op == 1)
             {

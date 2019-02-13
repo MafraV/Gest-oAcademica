@@ -1,18 +1,12 @@
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class Lab {
 
-    private ArrayList<Collaborator> Collaborators = new ArrayList<Collaborator>();
-    private ArrayList<String> Collaborators_names = new ArrayList<String>();
+    private Map<String, Collaborator> Collaborators = new HashMap<String, Collaborator>();
     private ArrayList<String> Collaborators_email = new ArrayList<String>();
-    private ArrayList<Project> Projects = new ArrayList<Project>();
-    private ArrayList<String> Projects_titles = new ArrayList<String>();
-    private ArrayList<Publication> Publications = new ArrayList<Publication>();
-    private ArrayList<String> Publication_titles = new ArrayList<String>();
-    private ArrayList<Guidance> Guidances = new ArrayList<Guidance>();
-    private ArrayList<String> Guidance_titles = new ArrayList<String>();
+    private Map<String, Project> Projects = new HashMap<String, Project>();
+    private Map<String, Publication> Publications = new HashMap<String, Publication>();
+    private Map<String, Guidance> Guidances = new HashMap<String, Guidance>();
     private Scanner input = new Scanner(System.in);
 
 
@@ -21,6 +15,7 @@ public class Lab {
     public void add_collaborator()
     {
         int readd = 1;
+        int type = 0;
         while(readd == 1)
         {
             System.out.print("Please, enter the new Collaborator's full name: ");
@@ -29,7 +24,7 @@ public class Lab {
 
 
 
-            while((Collaborators_names.contains(name)) && (reop != 2))
+            while((Collaborators.containsKey(name)) && (reop != 2))
             {
                 System.out.print("\nName already registered!\n");
                 reop = this.tryAgain();
@@ -75,17 +70,16 @@ public class Lab {
             System.out.print("3 - A PhD Student;\n");
             System.out.print("4 - A Teacher;\n");
             System.out.print("5 - A Researcher.\n");
-            int type = Integer.parseInt(input.nextLine());
+            type = this.readInteger(type);
 
             Collaborator collaborator = new Collaborator(name, email, type);
-            Collaborators.add(collaborator);
-            Collaborators_names.add(name);
+            Collaborators.put(name, collaborator);
             Collaborators_email.add(email);
 
             System.out.print("\nCollaborator Added!\n");
             System.out.print("\nWant to add other Collaborator?\n");
             System.out.print("Press 1 to Yes or 2 to No.\n");
-            readd = Integer.parseInt(input.nextLine());
+            readd = this.readInteger(readd);
         }
 
         System.out.print("\nReturning to the main menu!\n\n");
@@ -94,12 +88,14 @@ public class Lab {
     public void create_project()
     {
        int recreate = 1;
+       int day = 0, month = 0, year = 0, end_day = 0, end_month = 0, end_year = 0;
+        float financed_amount = 0;
        while(recreate == 1)
        {
            System.out.print("\nPlease, enter the Project Title: ");
            String title = input.nextLine();
            reop = 1;
-           while((Projects_titles.contains(title)) && (reop != 2))
+           while((Projects.containsKey(title)) && (reop != 2))
            {
                System.out.print("\nTitle already registered!\n");
                reop = this.tryAgain();
@@ -127,14 +123,12 @@ public class Lab {
            String funding_agency = input.nextLine();
 
            System.out.print("Please, enter the Project's Financed Amount (in Reais): ");
-           float financed_amount = input.nextFloat();
-           input.nextLine();
+           financed_amount = this.readFloat(financed_amount);
 
            System.out.print("Please, enter the Project's start date (numbers and spaces only): ");
-           int day = input.nextInt();
-           int month = input.nextInt();
-           int year = input.nextInt();
-           input.nextLine();
+           day = this.readInteger(day);
+           month = this.readInteger(month);
+           year = this.readInteger(year);
 
            while(((day > 31) || (month > 12) || (year > 2018) || (year < 0)) && reop == 1)
            {
@@ -144,10 +138,9 @@ public class Lab {
                if(reop == 1)
                {
                    System.out.print("Please, enter the Project's start date (numbers and spaces only): ");
-                   day = input.nextInt();
-                   month = input.nextInt();
-                   year = input.nextInt();
-                   input.nextLine();
+                   day = this.readInteger(day);
+                   month = this.readInteger(month);
+                   year = this.readInteger(year);
                }
            }
 
@@ -158,10 +151,9 @@ public class Lab {
            }
 
            System.out.print("Please, enter the Project's probably end date (numbers and spaces only): ");
-           int end_day = input.nextInt();
-           int end_month = input.nextInt();
-           int end_year = input.nextInt();
-           input.nextLine();
+           end_day = this.readInteger(end_day);
+           end_month = this.readInteger(end_month);
+           end_year = this.readInteger(end_year);
 
            while(((end_day > 31) || (end_month > 12) || (end_year < 0) || (end_year < year) || ((end_year == year) && (end_month < month)) || ((end_year == year) && (end_month == month) && (end_day < day))) && (reop == 1))
            {
@@ -171,10 +163,9 @@ public class Lab {
                if(reop == 1)
                {
                    System.out.print("Please, enter the Project's probably end date (numbers and spaces only): ");
-                   end_day = input.nextInt();
-                   end_month = input.nextInt();
-                   end_year = input.nextInt();
-                   input.nextLine();
+                   end_day = this.readInteger(end_day);
+                   end_month = this.readInteger(end_month);
+                   end_year = this.readInteger(end_year);
                }
            }
 
@@ -187,7 +178,7 @@ public class Lab {
            System.out.print("Please, enter the name of the Teacher who will participate in the project: ");
            String teacher_name = input.nextLine();
 
-           while((!Collaborators_names.contains(teacher_name)) && (reop == 1))
+           while((!Collaborators.containsKey(teacher_name)) && (reop == 1))
            {
                System.out.print("\nCollaborator not registered!\n");
                reop = this.tryAgain();
@@ -205,8 +196,7 @@ public class Lab {
                return;
            }
 
-           int teacher_index = Collaborators_names.indexOf(teacher_name);
-           Collaborator teacher = Collaborators.get(teacher_index);
+           Collaborator teacher = Collaborators.get(teacher_name);
 
            while((!Objects.equals("Teacher", teacher.getType())) && (reop == 1))
            {
@@ -219,8 +209,7 @@ public class Lab {
                    teacher_name = input.nextLine();
                }
 
-               teacher_index = Collaborators_names.indexOf(teacher_name);
-               teacher = Collaborators.get(teacher_index);
+               teacher = Collaborators.get(teacher_name);
            }
 
            if(reop == 2)
@@ -230,14 +219,13 @@ public class Lab {
            }
 
            Project project = new Project(title, objective, description, funding_agency, financed_amount, day, month, year, end_day, end_month, end_year, teacher);
-           Projects_titles.add(title);
-           Projects.add(project);
+           Projects.put(title, project);
            teacher.addProject(project);
 
            System.out.print("\nProject Created!\n");
            System.out.print("\nWant to create other Project?\n");
            System.out.print("Press 1 to Yes or 2 to No.\n");
-           recreate = Integer.parseInt(input.nextLine());
+           recreate = this.readInteger(recreate);
        }
 
         System.out.print("\nReturning to the main menu!\n\n");
@@ -246,12 +234,13 @@ public class Lab {
     public void create_publication()
     {
         int recreate = 1;
+        int year = 0;
         while(recreate == 1) {
             System.out.print("Please, enter the Publication title: ");
             reop = 1;
             String title = input.nextLine();
 
-            while ((Publication_titles.contains(title)) && (reop != 2))
+            while ((Publications.containsKey(title)) && (reop != 2))
             {
                 System.out.print("\nPublication already exist!\n");
                 reop = this.tryAgain();
@@ -273,7 +262,7 @@ public class Lab {
             String conference = input.nextLine();
 
             System.out.print("Please, enter the Publication's year: ");
-            int year = Integer.parseInt(input.nextLine());
+            year = this.readInteger(year);
 
             while(year > 2018 && reop == 1)
             {
@@ -283,7 +272,7 @@ public class Lab {
                 if(reop == 1)
                 {
                     System.out.print("Please, enter the Publication's year: ");
-                    year = Integer.parseInt(input.nextLine());
+                    year = this.readInteger(year);
                 }
             }
 
@@ -303,7 +292,7 @@ public class Lab {
                 System.out.print("Please, enter the name of one of the authors: ");
                 author_name = input.nextLine();
 
-                while((author_names.contains(author_name) || !Collaborators_names.contains(author_name)) && reop == 1)
+                while((author_names.contains(author_name) || !Collaborators.containsKey(author_name)) && reop == 1)
                 {
                     System.out.print("\nCollaborator is already a author or isn't registered in the lab!\n");
                     reop = this.tryAgain();
@@ -321,12 +310,11 @@ public class Lab {
                 }
 
                 author_names.add(author_name);
-                int author_index = Collaborators_names.indexOf(author_name);
-                authors.add(Collaborators.get(author_index));
+                authors.add(Collaborators.get(author_name));
                 System.out.print("\nAuthor registered!\n");
                 System.out.print("\nWant to register other author?\n");
                 System.out.print("Press 1 to Yes or 2 to No.\n");
-                readd = Integer.parseInt(input.nextLine());
+                readd = this.readInteger(readd);
             }
 
             if(authors.isEmpty())
@@ -336,7 +324,7 @@ public class Lab {
 
             System.out.print("Want to add any other information about the Publication?\n");
             System.out.print("Press 1 to Yes or 2 to No.\n");
-            readd = Integer.parseInt(input.nextLine());
+            readd = this.readInteger(readd);
             ArrayList<String> info = new ArrayList<String>();
             String infor;
 
@@ -363,12 +351,11 @@ public class Lab {
                 System.out.print("\nInformation added!\n");
                 System.out.print("\nWant to add other information?\n");
                 System.out.print("Press 1 to Yes or 2 to No.\n");
-                readd = Integer.parseInt(input.nextLine());
+                readd = this.readInteger(readd);
             }
 
             Publication publication = new Publication(title, conference, year, authors, info);
-            Publications.add(publication);
-            Publication_titles.add(title);
+            Publications.put(title, publication);
             int i;
             Collaborator author;
             for(i=0; i<authors.size(); i++)
@@ -380,7 +367,7 @@ public class Lab {
             System.out.print("\nPublication Created!\n");
             System.out.print("\nWant to create other publication?\n");
             System.out.print("Press 1 to Yes or 2 to No.\n");
-            recreate = Integer.parseInt(input.nextLine());
+            recreate = this.readInteger(recreate);
         }
 
         System.out.print("\nReturning to the main menu!\n\n");
@@ -395,7 +382,7 @@ public class Lab {
             reop = 1;
             String title = input.nextLine();
 
-            while ((Guidance_titles.contains(title)) && (reop != 2))
+            while ((Guidances.containsKey(title)) && (reop != 2))
             {
                 System.out.print("\nGuidance already exist!\n");
                 reop = this.tryAgain();
@@ -416,7 +403,7 @@ public class Lab {
             System.out.print("Please, enter the Advisor's (Teacher) name: ");
             String teacher_name = input.nextLine();
 
-            while(!Collaborators_names.contains(teacher_name) && reop == 1)
+            while(!Collaborators.containsKey(teacher_name) && reop == 1)
             {
                 System.out.print("\nCollaborator not found!\n");
                 reop = this.tryAgain();
@@ -434,8 +421,7 @@ public class Lab {
                 return;
             }
 
-            int index_teacher = Collaborators_names.indexOf(teacher_name);
-            Collaborator teacher = Collaborators.get(index_teacher);
+            Collaborator teacher = Collaborators.get(teacher_name);
 
             if(!Objects.equals(teacher.getType(), "Teacher"))
             {
@@ -447,7 +433,7 @@ public class Lab {
             System.out.print("Please, enter the Student's name: ");
             String student_name = input.nextLine();
 
-            while(!Collaborators_names.contains(student_name) && reop == 1)
+            while(!Collaborators.containsKey(student_name) && reop == 1)
             {
                 System.out.print("\nCollaborator not found!\n");
                 reop = this.tryAgain();
@@ -465,8 +451,7 @@ public class Lab {
                 return;
             }
 
-            int index_student = Collaborators_names.indexOf(student_name);
-            Collaborator student = Collaborators.get(index_student);
+            Collaborator student = Collaborators.get(student_name);
 
             if(Objects.equals(student.getType(), "Teacher") || (Objects.equals(student.getType(), "Researcher")))
             {
@@ -476,15 +461,14 @@ public class Lab {
             }
 
             Guidance guidance = new Guidance(teacher, student, title);
-            Guidances.add(guidance);
-            Guidance_titles.add(title);
+            Guidances.put(title, guidance);
             teacher.addGuidance(guidance);
             student.addGuidance(guidance);
 
             System.out.print("\nGuidance Created!\n");
             System.out.print("\nWant to create other Guidance?\n");
             System.out.print("Press 1 to Yes or 2 to No.\n");
-            recreate = Integer.parseInt(input.nextLine());
+            recreate = this.readInteger(recreate);
         }
 
         System.out.print("\nReturning to the main menu!\n\n");
@@ -496,7 +480,7 @@ public class Lab {
         System.out.print("Please, enter the Project's title: ");
         String project_title = input.nextLine();
 
-        while((!Projects_titles.contains(project_title)) && reop == 1)
+        while((!Projects.containsKey(project_title)) && reop == 1)
         {
             System.out.print("\nProject not found!\n");
             reop = this.tryAgain();
@@ -514,8 +498,7 @@ public class Lab {
             return;
         }
 
-        int project_index = Projects_titles.indexOf(project_title);
-        Project project = Projects.get(project_index);
+        Project project = Projects.get(project_title);
 
         if(Objects.equals(project.getStats(), "Concluido"))
         {
@@ -535,7 +518,7 @@ public class Lab {
             System.out.print("4 - Associate Guidance to the project;\n");
             System.out.print("5 - Finish Project;\n");
             System.out.print("6 - Return to the main menu.\n");
-            op = Integer.parseInt(input.nextLine());
+            op = this.readInteger(op);
 
             if(op == 1)
             {
@@ -547,7 +530,7 @@ public class Lab {
                     reop = 1;
 
 
-                    while(!Collaborators_names.contains(name) && reop == 1)
+                    while(!Collaborators.containsKey(name) && reop == 1)
                     {
                         System.out.print("\nCollaborator not found!\n");
                         reop = this.tryAgain();
@@ -561,8 +544,7 @@ public class Lab {
 
                     if(reop == 2) break;
 
-                    int collaborator_index = Collaborators_names.indexOf(name);
-                    Collaborator collaborator = Collaborators.get(collaborator_index);
+                    Collaborator collaborator = Collaborators.get(name);
 
                     while(project.getCollaborators().contains(collaborator) && reop == 1)
                     {
@@ -575,8 +557,7 @@ public class Lab {
                             name = input.nextLine();
                         }
 
-                        collaborator_index = Collaborators_names.indexOf(name);
-                        collaborator = Collaborators.get(collaborator_index);
+                        collaborator = Collaborators.get(name);
                     }
 
                     if(reop == 2) break;
@@ -588,7 +569,7 @@ public class Lab {
                         System.out.print("\nCollaborator Allocated!\n");
                         System.out.print("\nWant to add other Collaborator?\n");
                         System.out.print("Press 1 to Yes or 2 to No.\n");
-                        readd = Integer.parseInt(input.nextLine());
+                        readd = this.readInteger(readd);
                     }
 
                     else readd = 2;
@@ -620,7 +601,7 @@ public class Lab {
                         System.out.print("Please, enter the Publication title: ");
                         String title = input.nextLine();
 
-                        while(!Publication_titles.contains(title) && reop == 1)
+                        while(!Publications.containsKey(title) && reop == 1)
                         {
                             System.out.print("\nPublication not found!\n");
                             reop = this.tryAgain();
@@ -634,8 +615,7 @@ public class Lab {
 
                         if(reop == 2) break;
 
-                        int pub_index = Publication_titles.indexOf(title);
-                        Publication publication = Publications.get(pub_index);
+                        Publication publication = Publications.get(title);
 
                         if((publication.getYear() > project.getEnd_year()) || (publication.getYear() < project.getStart_year()))
                         {
@@ -648,7 +628,7 @@ public class Lab {
                         System.out.print("\nPublication associated!\n");
                         System.out.print("\nWant to associate other Publication?\n");
                         System.out.print("Press 1 to Yes or 2 to No\n");
-                        readd = Integer.parseInt(input.nextLine());
+                        readd = this.readInteger(readd);
                     }
 
                     System.out.print("\nReturning to the Project menu!\n");
@@ -673,7 +653,7 @@ public class Lab {
                         System.out.print("Please, enter the Guidance title: ");
                         String title = input.nextLine();
 
-                        while(!Guidance_titles.contains(title) && reop == 1)
+                        while(!Guidances.containsKey(title) && reop == 1)
                         {
                             System.out.print("\nGuidance not found!\n");
                             reop = this.tryAgain();
@@ -687,15 +667,14 @@ public class Lab {
 
                         if(reop == 2) break;
 
-                        int gui_index = Guidance_titles.indexOf(title);
-                        Guidance guidance = Guidances.get(gui_index);
+                        Guidance guidance = Guidances.get(title);
 
                         project.addGuidance(guidance);
 
                         System.out.print("\nGuidance associated!\n");
                         System.out.print("\nWant to associate other Guidance?\n");
                         System.out.print("Press 1 to Yes or 2 to No\n");
-                        readd = Integer.parseInt(input.nextLine());
+                        readd = this.readInteger(readd);
                     }
 
                     System.out.print("\nReturning to the Project menu!\n");
@@ -721,11 +700,17 @@ public class Lab {
         System.out.print("\nThe Lab has:\n" + Collaborators.size() + " Collaborator(s);\n");
         int p_e, p_a, p_c, i;
         p_e = p_a = p_c = 0;
+
+        Set projectsKeySet = Projects.keySet();
+        Object projectNames[] = projectsKeySet.toArray();
+
         for(i=0; i<Projects.size(); i++)
         {
-            if(Objects.equals(Projects.get(i).getStats(), "Em elaboração")) p_e++;
-            else if(Objects.equals(Projects.get(i).getStats(), "Em andamento")) p_a++;
-            else if(Objects.equals(Projects.get(i).getStats(), "Concluido")) p_c++;
+            Object projectName = projectNames[i];
+
+            if(Objects.equals(Projects.get(projectName).getStats(), "Em elaboração")) p_e++;
+            else if(Objects.equals(Projects.get(projectName).getStats(), "Em andamento")) p_a++;
+            else if(Objects.equals(Projects.get(projectName).getStats(), "Concluido")) p_c++;
         }
         System.out.print(p_e + " Project(s) under development;\n");
         System.out.print(p_a + " Project(s) in progress;\n");
@@ -744,7 +729,7 @@ public class Lab {
         reop = 1;
         String collaborator_name = input.nextLine();
 
-        while(!(Collaborators_names.contains(collaborator_name)) && (reop != 2))
+        while(!(Collaborators.containsKey(collaborator_name)) && (reop != 2))
         {
             System.out.print("\nCollaborator not found!!\n");
             reop = this.tryAgain();
@@ -762,8 +747,7 @@ public class Lab {
             return;
         }
 
-        int coll_index = Collaborators_names.indexOf(collaborator_name);
-        Collaborator coll = Collaborators.get(coll_index);
+        Collaborator coll = Collaborators.get(collaborator_name);
 
         coll.print();
     }
@@ -774,7 +758,7 @@ public class Lab {
         reop = 1;
         String project_title = input.nextLine();
 
-        while(!(Projects_titles.contains(project_title)) && (reop != 2))
+        while(!(Projects.containsKey(project_title)) && (reop != 2))
         {
             System.out.print("\nProject not found!!\n");
             reop = this.tryAgain();
@@ -792,16 +776,60 @@ public class Lab {
             return;
         }
 
-        int proj_index = Projects_titles.indexOf(project_title);
-        Project proj = Projects.get(proj_index);
+        Project proj = Projects.get(project_title);
 
         proj.print();
     }
 
     public int tryAgain()
     {
+        int x = 0;
         System.out.print("\nWant to try again?\n");
         System.out.print("Press 1 to Yes or 2 to No.\n");
-        return Integer.parseInt(input.nextLine());
+        return readInteger(x);
+    }
+
+    public int readInteger(int x)
+    {
+        boolean correctInput = false;
+
+        while(!correctInput)
+        {
+            try{
+                x = Integer.parseInt(input.nextLine());
+
+
+                correctInput = true;
+            }
+
+            catch(Exception e){
+
+                System.out.print("\nInput isn't a Number!" + "\n" + "Please, try again:\n\n");
+            }
+        }
+
+        return x;
+    }
+
+    public float readFloat(Float x)
+    {
+        boolean correctInput = false;
+
+        while(!correctInput)
+        {
+            try{
+                x = Float.parseFloat(input.nextLine());
+
+
+                correctInput = true;
+            }
+
+            catch(Exception e){
+
+                System.out.print("\nInput isn't a Number!" + "\n" + "Please, try again:\n\n");
+            }
+        }
+
+        return x;
     }
 }
